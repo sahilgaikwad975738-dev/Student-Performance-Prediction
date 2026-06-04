@@ -12,7 +12,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 model = RandomForestClassifier()
 model.fit(X_train, y_train)
 
-st.title("🎓 Student Result Predictor")
+st.title("Student Result Predictor")
 
 name         = st.text_input("Student Name")
 study_hours  = st.number_input("Study Hours", 0, 24)
@@ -29,6 +29,6 @@ if st.button("Predict"):
     st.write(f"**Grade:** {grade}")
 
     if result == 1:
-        st.success("✅ PASS")
+        st.success("PASS")
     else:
-        st.error("❌ FAIL")
+        st.error("FAIL")
