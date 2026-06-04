@@ -1,8 +1,11 @@
+import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import os
+
+st.title("Student Performance Prediction")
 
 # Generate sample data if CSV doesn't exist
 if not os.path.exists("student_data.csv"):
@@ -14,31 +17,25 @@ if not os.path.exists("student_data.csv"):
     })
     sample_data.to_csv("student_data.csv", index=False)
 
-# Load dataset
+# Load and train
 data = pd.read_csv("student_data.csv")
-
-# Input and output
 X = data[['Study_Hours', 'Attendance', 'Previous_Score']]
 y = data['Result']
-
-# Split data
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-
-# Train model
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 model = RandomForestClassifier()
 model.fit(X_train, y_train)
+accuracy = accuracy_score(y_test, model.predict(X_test))
 
-# Test model
-y_pred = model.predict(X_test)
+st.success(f"Model Accuracy: {accuracy * 100:.2f}%")
 
-print("Accuracy:", accuracy_score(y_test, y_pred))
+st.subheader("Enter Student Details")
+study_hours = st.slider("Study Hours per Day", 0, 12, 6)
+attendance = st.slider("Attendance (%)", 0, 100, 85)
+previous_score = st.slider("Previous Score", 0, 100, 78)
 
-# Predict new student
-prediction = model.predict([[6, 85, 78]])
-
-if prediction[0] == 1:
-    print("Pass")
-else:
-    print("Fail")
+if st.button("Predict"):
+    result = model.predict([[study_hours, attendance, previous_score]])
+    if result[0] == 1:
+        st.success("The student is likely to PASS")
+    else:
+        st.error("The student is likely to FAIL")
